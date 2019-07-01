@@ -1,0 +1,15 @@
+﻿ul.nav.nav-tabs {
+    margin: 20px 0px;
+}
+
+ul.nav.nav-tabs li:not(.active) a {
+    margin: 10px 2px;
+    background-color: #eeeeee;
+    color: grey;
+}
+
+    ul.nav.nav-tabs li.active a {
+        color: forestgreen;
+        font-weight:bolder;
+        border-top: 3px solid #16a765;
+    }

@@ -1,0 +1,107 @@
+﻿@{
+    Layout = null;
+
+
+}
+
+<style>
+
+    body {
+        text-align: center;
+    }
+
+    form {
+        display: inline-block;
+    }
+</style>
+<form method="post" id="addForm">
+    <div class="row">
+        <div class="col-sm-6">
+
+            <div class="form-group">
+                <label for="fname">Name:</label>
+                <input class="form-control" id="fname" placeholder="food name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="calories">Calories:</label>
+                <input type="number" class="form-control" id="fcalories" placeholder="0" required>
+            </div>
+            <div class="form-group">
+                <label for="carbs">Carbs:</label>
+                <input type="number" class="form-control" id="fcarbs" placeholder="0" required>
+            </div>
+
+
+            <button type="submit" class="btn btn-default btn-primary">Add</button>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="sel1">Units:</label>
+                <select class="form-control" id="funits">
+                    <option>100-grams</option>
+                    <option>1-unit</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="proteins">Proteins:</label>
+                <input type="number" class="form-control" placeholder="0" id="fproteins" required>
+            </div>
+            <div class="form-group">
+                <label for="fats">Fats:</label>
+                <input type="number" class="form-control" id="ffats" placeholder="0" required>
+            </div>
+            <button type="reset" id="btn_clear" class="btn btn-default" style="background-color:darkgrey;">Clear</button>
+        </div>
+    </div>
+</form>
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/Scripts.js"></script>
+
+<script>
+    // HANDLE THE ON SUBMIT OF THE FORM
+    $('#addForm').submit(function (e) {
+        // prevent default!
+        e.preventDefault();
+
+        // create JSON STRING from form data using STRINGIFY
+        var jsonObject = {
+            'Name': $('#fname').val(),
+            'Units': $('#funits').find(":selected").text(),
+            'Calories': $('#fcalories').val(),
+            'Proteins': $('#fproteins').val(),
+            'Carbs': $('#fcarbs').val(),
+            'Fats': $('#ffats').val()
+        };
+
+        var str_json = JSON.stringify(jsonObject);
+        //alert(str_json);
+
+        // SEND JSON TO CONTROLLER
+        $.ajax({
+            url: "@Url.Action("AddNewFood")",
+            type: "POST",
+            data: { foodData: str_json },
+            // ON FAILURE
+            error: function (response) {
+                alert('controller response failed! Could not add new food.');
+            },
+            // ON SUCCESS, USE RETURNED JSON RESULT:
+            success: function (response) {
+                var food_exist = response;
+                if (food_exist == "yes") {
+                    alert("The food your'e trying to add is already exist in the database.");
+                }
+                else {
+                    //alert("The food has been added sucessfuly!");
+                    location.reload();
+                }
+            }
+         });
+     });
+</script>
+
+
+

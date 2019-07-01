@@ -1,0 +1,68 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/Scripts.js"></script>
+    <title>Nutry - LOG IN</title>
+    <link href="~/Content/LoginCSS.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="login-page">
+        <div class="form">
+            <form class="login-form" method="post" @*name="loginForm"*@ id="loginForm">
+                <input type="email" id="email_in" name="name" placeholder="email" />
+                <input type="password" id="pass_in" name="password" placeholder="password" required />
+                <input type="submit" value="Log in" font-weight:bolder;">
+                <p class="message">Not registered? <a href='@Url.Action("Register", "Login")'>Create an account</a></p>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    // HANDLE THE ON SUBMIT OF THE FORM
+    $('#loginForm').submit(function (e) {
+        // prevent default!
+        e.preventDefault();
+
+        // create JSON STRING from form data using STRINGIFY
+        var jsonObject = {
+            'email': $('#email_in').val(),
+            'pass': $('#pass_in').val()
+        };
+        var str_json = JSON.stringify(jsonObject);
+
+        // SEND JSON TO CONTROLLER
+        $.ajax({
+            url: "@Url.Action("HandleLoginForm")",
+            type: "POST",
+            data: { loginData: str_json },
+            // ON FAILURE
+            error: function (response) {
+                alert('controller response failed!');
+            },
+            // ON SUCCESS, USE RETURNED JSON RESULT:
+            success: function (response) {
+                var user_exist = response;
+                if (user_exist == "yes") {
+                    window.location.href = "@Url.Action("Index","Food")";
+                }
+                else {
+                    alert('E-Mail or Password are incorrect! Please try again.');
+                    $('#email_in').val('');
+                    $('#pass_in').val('');
+                }
+            }
+         });
+     });
+</script>
+
+
+

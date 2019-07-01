@@ -1,0 +1,81 @@
+﻿
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <link href="~/Content/Register.css" rel="stylesheet" type="text/css" />
+    <title>Creative Colorlib SignUp Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="//fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i" rel="stylesheet">
+</head>
+<body>
+    <div class="main-w3layouts wrapper">
+        <h1>Nutry - Sign UP</h1>
+        <div class="main-agileinfo">
+            <div class="agileits-top">
+                <form action="#" method="post" id="regForm">
+                    <input class="text" type="text" id="name" name="Username" placeholder="Username" required="">
+                    <input class="text email" id="email" type="email" name="email" placeholder="Email" required="">
+                    <input class="text" type="password" id="pass" name="password" placeholder="Password" required="">
+                    <div class="wthree-text">
+                        <div class="clear"> </div>
+                    </div>
+                    <input type="submit" value="SIGNUP">
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+
+    // HANDLE THE ON SUBMIT OF THE FORM
+    $('#regForm').submit(function (e) {
+
+        // prevent default!
+        e.preventDefault();
+
+        // create JSON STRING from form data using STRINGIFY
+        var jsonObject = {
+            'name': $('#name').val(),
+            'email': $('#email').val(),
+            'pass': $('#pass').val(),
+        };
+        var str_json = JSON.stringify(jsonObject);
+
+        // SEND JSON TO CONTROLLER
+        $.ajax({
+            url: "@Url.Action("HandleRegisterForm")",
+            type: "POST",
+            data: { str: str_json },
+            // ON FAILURE
+            error: function (response) {
+                alert('controller response failed!');
+            },
+            // ON SUCCESS, USE RETURNED JSON RESULT:
+            success: function (response) {
+                //var json_obj = JSON.parse(response);
+                if (response == "added") {
+                    window.location.href = "@Url.Action("Index","Login")";
+                    alert('User added successfuly!');
+                }
+                else if (response == "exist") {
+                    alert('E-Mail already exists!');
+                }
+                else {
+                    alert('Somthing went wrong...');
+                }
+                
+            }
+         });
+
+     });
+
+</script>

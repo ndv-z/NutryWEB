@@ -1,0 +1,70 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <!--FOODS TABLE-->
+    <div class="container">
+        <table id="createMealTable" class="table table-striped table-condensed">
+            <thead style="font-weight:bolder" align="center">
+                <tr>
+                    <td>Amount</td>
+                    <td>Name</td>
+                    <td>Units</td>
+                    <td>Calories</td>
+                    <td>Proteins</td>
+                    <td>Carbs</td>
+                    <td>Fats</td>
+                </tr>
+            </thead>
+            <tbody align="center"></tbody>
+        </table>
+    </div>
+
+    <div>
+        <button class="btn btn-primary" style="font-size:larger">add</button>
+    </div>
+
+</body>
+</html>
+
+<script src="jquery.min.js"></script>
+<script src="~/Scripts/NutryScripts.js"></script>
+
+<!--    FILL TABLE WITH FOODS FROM DB   -->
+<script>
+        $.ajax({
+            url: "@Url.Action("GetAllFoods","Food")",
+            type: "POST",
+            error: function (response) {
+                alert('controller response failed!');
+            },
+            success: function (response) {
+                var allFoods = JSON.parse(response);
+                $.each(allFoods, function(){
+                    var foodRow =
+                        "<tr><td><input placeholder=\"0\" style=\"width:45px\" type=\"number\">" +
+                        "</td><td>" + this.Name +
+                        "</td><td>" + this.Units +
+                        "</td><td>" + this.Calories +
+                        "</td><td>" + this.Proteins +
+                        "</td><td>" + this.Carbs +
+                        "</td><td>" + this.Fats +
+                        "</td></tr>";
+                    $('#createMealTable').append(foodRow);
+                });
+            }
+         });
+
+</script>
+
+<!--    CREATE 'onclick()' event FOR THE 'ADD' <BUTTON></BUTTON>-->
+<!--    USE THIS: https://stackoverflow.com/questions/53427267/ -->

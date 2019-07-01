@@ -1,0 +1,337 @@
+﻿@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/NutryScripts.js"></script>
+    <meta charset="utf-8" name="viewport" content="width=device-width" />
+    <title>Get Table Cell Value</title>
+    <style>
+        .container {
+            width: 768px;
+            margin: 0 auto;
+        }
+
+        .table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .table, th, td {
+            border: 1px solid lightgray;
+            padding: 10px;
+
+        }
+
+        .table th {
+            height: 25px;
+        }
+
+        select {
+            text-align-last: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!--FOODS TABLE-->
+    <div class="container">
+        <table id="foodsTable" class="table table-striped table-condensed">
+            <thead style="font-weight:bolder" align="center">
+                <tr>
+                    <td>Name</td>
+                    <td>Units</td>
+                    <td>Calories</td>
+                    <td>Proteins</td>
+                    <td>Carbs</td>
+                    <td>Fats</td>
+                    <td colspan="2"></td>
+                </tr>
+            </thead>
+            <tbody align="center"></tbody>
+        </table>
+    </div>
+
+
+    <!--EDIT MODAL-->
+    <div class="container mt-3">
+
+        <!-- The Modal -->
+        <div class="modal fade" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <div class="container">
+
+                            <div class="col-sm-11">
+
+                                <!--Row ONE-->
+                                <div class="row">
+                                    <div class="col-sm-4 ">
+                                        <label for="name">Name:</label>
+                                        <input type="text" id="name" value="" class="text-center" />
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label for="units">Units:</label>
+                                        <select class="form-control" id="units">
+                                            <option>100-grams</option>
+                                            <option>1-unit</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!--Row TWO-->
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label for="calories">Calories:</label>
+                                        <input type="number" id="calories" value="" class="text-center" />
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label for="proteins">Proteins:</label>
+                                        <input type="number" id="proteins" value="" class="text-center" />
+                                    </div>
+                                </div>
+
+                                <!--Row THREE-->
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <label for="carbs">Carbs:</label>
+                                        <input type="number" id="carbs" value="" class="text-center" />
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label for="fats">Fats:</label>
+                                        <input type="number" id="fats" value="" class="text-center" />
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button id="save" type="button" class="btn btn-success" data-dismiss="modal">Save</button>
+                        <button id="discard" type="button" class="btn btn-danger" data-dismiss="modal">Discard</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--Modal: modalConfirmDelete-->
+    <div class="modal fade" id="modalConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-notify modal-danger" role="document">
+            <!--Content-->
+            <div class="modal-content text-center">
+                <!--Header-->
+                <div class="modal-header d-flex justify-content-center">
+                    <p class="heading">Confirm delete of:</p>
+                </div>
+
+                <!--Body-->
+                <div class="modal-body" id="delete_modal_info_div">
+                </div>
+
+                <!--Footer-->
+                <div class="modal-footer flex-center">
+                    <button id="del_yes" class="btn btn-danger">Delete</button>
+                    <button id="del_no" class="btn btn-primary">No, keep the food item</button>
+                </div>
+            </div>
+            <!--/.Content-->
+        </div>
+    </div>
+    <!--Modal: modalConfirmDelete-->
+
+</body>
+</html>
+
+<script src="jquery.min.js"></script>
+<script src="~/Scripts/NutryScripts.js"></script>
+
+<!--FILL TABLE WITH FOODS FROM DB-->
+<script>
+        $.ajax({
+            url: "@Url.Action("GetAllFoods","Food")",
+            type: "POST",
+            error: function (response) {
+                alert('controller response failed!');
+            },
+            success: function (response) {
+                var allFoods = JSON.parse(response);
+                $.each(allFoods, function(){
+                    var foodRow = "<tr><td>" + this.Name +
+                        "</td><td>" + this.Units +
+                        "</td><td>" + this.Calories +
+                        "</td><td>" + this.Proteins +
+                        "</td><td>" + this.Carbs +
+                        "</td><td>" + this.Fats +
+                        "<td><button type=\"button\" class=\"btn btn-primary edit-food-btn\">edit</button></td>" +
+                        "<td><button type=\"button\" class=\"btn btn-danger del-food-btn\">delete</button></td>" +
+                        "</td></tr>";
+                    $('#foodsTable').append(foodRow);
+                });
+            }
+         });
+
+</script>
+
+<!--Initialize EDIT MODAL opening on edit button click-->
+<script>
+
+// when clicking edit-food button:
+$('.table tbody').on('click', '.edit-food-btn', function (){
+
+    // get clicked food row info from table
+    var curr_row = $(this).closest('tr');
+    var name = curr_row.find('td:eq(0)').text();
+    var units = curr_row.find('td:eq(1)').text();
+    var cals = curr_row.find('td:eq(2)').text();
+    var pros = curr_row.find('td:eq(3)').text();
+    var carbs = curr_row.find('td:eq(4)').text();
+    var fats = curr_row.find('td:eq(5)').text();
+    
+    // set place holder with data of food
+    $('.modal-body #name').val(name);
+    $('.modal-body #name').prop('disabled', true);
+    $('.modal-body #units').val(units);
+    $('.modal-body #units').prop('disabled', true);
+    $('.modal-body #calories').val(cals);
+    $('.modal-body #proteins').val(pros);
+    $('.modal-body #carbs').val(carbs);
+    $('.modal-body #fats').val(fats);
+
+    // onclicks for the save button
+    $("#save").click(function () {
+
+        // save modal input as json data
+        new_food_data = {
+            "Name": name,
+            "Units": units,
+            "Calories": $('.modal-body #calories').val(),
+            "Proteins":$('.modal-body #proteins').val(),
+            "Carbs":$('.modal-body #carbs').val(),
+            "Fats":$('.modal-body #fats').val(),
+        };
+
+        // TODO: send json data to controller
+        post_to_controller(new_food_data);
+
+        // TODO: recieve success - show success msg, clear & hide, refresh view all taba and show it
+        clear_modal_input();
+        $("#myModal").modal("hide");
+
+        // TODO: failed - show failure msg and hold
+        // ..
+
+    });
+
+    $("#discard").click(function(){
+        clear_modal_input();
+        $("#myModal").modal("hide");
+        location.reload();
+    });
+
+    // show edit modal
+    $("#myModal").modal("show");
+
+   
+
+});
+
+// clear modal input
+function clear_modal_input() {
+    $('.modal-body #name').val('');
+    $('.modal-body #units').val('');
+    $('.modal-body #calories').val('');
+    $('.modal-body #proteins').val('');
+    $('.modal-body #carbs').val('');
+    $('.modal-body #fats').val('');
+}
+
+
+ // handle sending to controller 
+function post_to_controller(jsonObject) {
+
+    var str_json = JSON.stringify(jsonObject);
+
+    // SEND JSON TO CONTROLLER
+    $.ajax({
+        url: "@Url.Action("Edit_Food")",
+        type: "POST",
+        data: { foodData: str_json },
+        // ON FAILURE
+        error: function (response) {
+            alert('controller response failed! Could not add new food.');
+        },
+        // ON SUCCESS, USE RETURNED JSON RESULT:
+        success: function (response) {
+            var food_edited = response;
+            if (food_edited == "yes") {
+                //alert("Edited successfuly.");
+                location.reload();
+            }
+            else {
+                alert("error123: could not edit food.");
+            }
+        }
+        });
+}
+
+</script>
+
+<!--Handle delete buttons-->
+<script>
+    $('.table tbody').on('click', '.del-food-btn', function () {
+
+
+        // get clicked food row info from table
+        var curr_row = $(this).closest('tr');
+        var fname = curr_row.find('td:eq(0)').text();
+        var funits = curr_row.find('td:eq(1)').text();
+
+        $("#delete_modal_info_div").html('Name: ' + fname + '<br>' +'Units: ' + funits + '<br><br>Are you sure?');
+
+        $("#del_yes").click(function () {
+            $.ajax({
+                url: "@Url.Action("Del_Food")",
+                type: "POST",
+                data: { name: fname, units: funits },
+                // ON FAILURE
+                error: function (response) {
+                    alert('controller response failed! Could not remove food.');
+                },
+                // ON SUCCESS, USE RETURNED JSON RESULT:
+                success: function (response) {
+                    var food_edited = response;
+                    if (food_edited == "yes") {
+                        //alert("Deleted successfuly.");
+                        location.reload();
+                    }
+                    else {
+                        alert("error111: could not delete food.");
+                    }
+                }
+            });
+            $("#modalConfirmDelete").modal("hide");
+
+        });
+        $("#del_no").click(function () {
+            $("#modalConfirmDelete").modal("hide");
+            location.reload();
+        });
+
+        // show 'are you sure?' modal
+        $("#modalConfirmDelete").modal("show");
+        
+    });
+
+</script>
