@@ -117,11 +117,14 @@
 
         // collect meal information (name, total values)
         var tcals = 0, tpros = 0, tcarbs = 0, tfats = 0;
+
         $("#createMealTable tr").not('thead tr').each(function () {
+
             var curr_row = $(this).closest('tr');
 
             var amount = curr_row.find("input").val();
-            var units = curr_row.find('td:eq(2)').text();
+            //var name = curr_row.find('td:eq(1)').text();
+            //var units = curr_row.find('td:eq(2)').text();
             var calories = Number(curr_row.find('td:eq(3)').text());
             var proteins = Number(curr_row.find('td:eq(4)').text());
             var carbs = Number(curr_row.find('td:eq(5)').text());
@@ -146,11 +149,60 @@
 
             // POST MEAL INFORMATION TO -> CONTROLLER SEND TO -> TABLE
             $('#modalAddBtn').click(function () {
-                //history.back();
+
+                // get meal name & date
                 meal_name = $('#meal_name').val();
                 meal_date = $('#meal_date').val();
-                location.reload();
-                $('#mealInfoModal').modal('hide');
+
+                // if empty
+                if (meal_name == "" || meal_date == "") {
+                    alert('Must enter a name for the meal,\nand a date it had been eaten on.')
+                }
+
+                // if ok
+                else {
+
+                    // START: SENDING MEAL TO CONTROLLER
+
+                    // to json
+                    var meal_json_data = {
+                        'Name': meal_name,'Date': meal_date,
+                        'Calories': tcals,'Proteins': tpros,
+                        'Carbs': tcarbs,'Fats': tfats
+                    }; 
+
+                    // stringify
+                    var str_json = JSON.stringify(meal_json_data);
+
+                    // post
+                    $.ajax({
+                        url: "@Url.Action("AddNewMeal")",
+                        type: "POST",
+                        data: { mealData: str_json },
+                        // on fail
+                        error: function (response) {
+                            alert('controller response failed! Could not add new meal.');
+                        },
+                        // on succ
+                        success: function (response) {
+                            var meal_exist = response;
+                            // if meal is already in DB
+                            if (meal_exist == "yes") {
+                                alert("ERROR: Meal already exist!");
+                            }
+                            // if meal added successfuly
+                            else {
+                                alert("The meal has been added sucessfuly!");
+                                //location.reload();
+                            }
+                        }
+                    });
+                    // END: SENDING MEAL TO CONTROLLER
+
+                    location.reload();
+                    $('#mealInfoModal').modal('hide');
+                }
+
             });
 
             $('#modalCancelBtn').click(function () {

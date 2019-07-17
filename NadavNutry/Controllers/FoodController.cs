@@ -101,7 +101,6 @@ namespace NadavNutry.Controllers
             JObject json_data = JObject.Parse(foodData);
 
             //// INTO FOOD OBJECT
-            //Users user = new Users();
             Food food = new Food();
             food.Name = (String)json_data["Name"];
             food.Units = (String)json_data["Units"];

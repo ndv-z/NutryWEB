@@ -28,5 +28,6 @@ namespace NadavNutry.Models
         public virtual DbSet<Food> Food { get; set; }
         public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<LoggedUser> LoggedUser { get; set; }
+        public virtual DbSet<Meal> Meal { get; set; }
     }
 }

@@ -1,20 +1,18 @@
-﻿
-@{
-    ViewBag.Title = "Index";
-}
-
+﻿@*     FOOD INDEX VIEW     *@
     <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#firstTab">View Foods</a></li>
-        <li><a data-toggle="tab" href="#secondTab">New Food</a></li>
-        <li><a data-toggle="tab" href="#thirdTab">View Meals</a></li>
-        <li><a data-toggle="tab" href="#fourthTab">New Meal</a></li>
+        <li class="active"><a data-toggle="tab" href="#tab1">Manage Foods</a></li>
+        <li><a data-toggle="tab" href="#tab2">New Food</a></li>
+        <li><a data-toggle="tab" href="#tab3">Create New Meal</a></li>
+        <li><a data-toggle="tab" href="#tab4">All Meals</a></li>
+        <li><a data-toggle="tab" href="#tab5">History & Statistics</a></li>
     </ul>
 
     <div class="tab-content">
-        <div id="firstTab" class="tab-pane fade in active">@Html.Action("ViewAllFoods", "Food")</div>
-        <div id="secondTab" class="tab-pane fade in">@Html.Action("AddOrEdit", "Food")</div>
-        <div id="thirdTab" class="tab-pane fade in">VIEW ALL MEALS</div>
-        <div id="fourthTab" class="tab-pane fade in">@Html.Action("Index", "CreateMeal")</div>
+        <div id="tab1" class="tab-pane fade in active">@Html.Action("ViewAllFoods", "Food")</div>
+        <div id="tab2" class="tab-pane fade in">@Html.Action("AddOrEdit", "Food")</div>
+        <div id="tab3" class="tab-pane fade in">@Html.Action("Index", "CreateMeal")</div>
+        <div id="tab4" class="tab-pane fade in">@Html.Action("EditMeals", "CreateMeal")</div>
+        <div id="tab5" class="tab-pane fade in">@Html.Action("Index", "History")</div>
     </div>
 
 @section scripts { @Scripts.Render("~/bundles/jqueryval")}

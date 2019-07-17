@@ -1,0 +1,168 @@
+﻿@*     VIEW ALL MEALS VIEW     *@
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/NutryScripts.js"></script>
+    <meta charset="utf-8" name="viewport" content="width=device-width" />
+
+    <style>
+        .container {
+            width: 768px;
+            margin: 0 auto;
+        }
+
+        .table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .table, th, td {
+            border: 1px solid lightgray;
+            padding: 10px;
+        }
+
+            .table th {
+                height: 25px;
+            }
+
+        select {
+            text-align-last: center;
+        }
+    </style>
+
+</head>
+<body>
+    <div>
+        <!--MEALS TABLE-->
+        <div class="container">
+            <table id="mealsTable" class="table table-striped table-condensed">
+                <thead style="font-weight:bolder" align="center">
+                    <tr>
+                        <td>Meal Name</td>
+                        <td>Eaten at</td>
+                        <td>Toal Calories</td>
+                        <td>Total Proteins</td>
+                        <td>Toal Carbs</td>
+                        <td>Toal Fats</td>
+                        <td colspan="1"></td>
+                    </tr>
+                </thead>
+                <tbody align="center"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!--Modal: modalConfirmMealDelete-->
+    <div class="modal fade" id="modalConfirmMealDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-notify modal-danger" role="document">
+            <!--Content-->
+            <div class="modal-content text-center">
+                <!--Header-->
+                <div class="modal-header d-flex justify-content-center">
+                    <p class="heading">Confirm delete of:</p>
+                </div>
+
+                <!--Body-->
+                <div class="modal-body" id="delete_meal_modal_info_div">
+                </div>
+
+                <!--Footer-->
+                <div class="modal-footer flex-center">
+                    <button id="del_meal_yes" class="btn btn-danger">Delete</button>
+                    <button id="del_meal_no" class="btn btn-primary">No, Go back</button>
+                </div>
+            </div>
+            <!--/.Content-->
+        </div>
+    </div>
+    <!--Modal: modalConfirmMealDelete-->
+
+</body>
+</html>
+
+<script src="jquery.min.js"></script>
+<script src="~/Scripts/NutryScripts.js"></script>
+
+<!--FILL TABLE WITH MEALS FROM DB-->
+<script>
+        $.ajax({
+            url: "@Url.Action("GetAllMeals","CreateMeal")",
+            type: "POST",
+            error: function (response) {
+                alert('controller response failed!');
+            },
+            success: function (response) {
+                var allMeals = JSON.parse(response);
+                $.each(allMeals, function(){
+                    var mealRow = "<tr><td>" + this.Name +
+                        "</td><td>" + this.Date +
+                        "</td><td>" + this.Calories +
+                        "</td><td>" + this.Proteins +
+                        "</td><td>" + this.Carbs +
+                        "</td><td>" + this.Fats +
+                        "<td><button type=\"button\" class=\"btn btn-danger del-meal-btn\">delete</button></td>" +
+                        "</td></tr>";
+                    $('#mealsTable').append(mealRow);
+                });
+            }
+         });
+
+</script>
+
+<!--Handle delete buttons-->
+<script>
+    $('.table tbody').on('click', '.del-meal-btn', function () {
+
+
+        // get clicked food row info from table
+        var curr_row = $(this).closest('tr');
+        var mname = curr_row.find('td:eq(0)').text();
+        var mdate = curr_row.find('td:eq(1)').text();
+
+        $("#delete_meal_modal_info_div").html('This action will delete the following Meal:<br><br>' +
+            'Name: ' + mname + '<br>' + 'Eaten at: ' + mdate +
+            '<br><br>Are you sure?');
+
+        $("#del_meal_yes").click(function () {
+            $.ajax({
+                url: "@Url.Action("Del_Meal")",
+                type: "POST",
+                data: { name: mname, date: mdate },
+                // ON FAILURE
+                error: function (response) {
+                    alert('controller response failed! Could not remove food.');
+                },
+                // ON SUCCESS, USE RETURNED JSON RESULT:
+                success: function (response) {
+                    var meal_deleted = response;
+                    if (meal_deleted == "yes") {
+                        //alert("Deleted successfuly.");
+                        location.reload();
+                    }
+                    else {
+                        alert("error: could not delete meal.");
+                    }
+                }
+            });
+            $("#modalConfirmMealDelete").modal("hide");
+        });
+
+        $("#del_meal_no").click(function () {
+            $("#modalConfirmMealDelete").modal("hide");
+            location.reload();
+        });
+
+        // show 'are you sure?' modal
+        $("#modalConfirmMealDelete").modal("show");
+
+    });
+
+</script>
