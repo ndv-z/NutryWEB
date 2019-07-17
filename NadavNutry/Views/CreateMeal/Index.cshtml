@@ -43,17 +43,19 @@
             <div class="modal-content">
                 <!--Header-->
                 <div class="modal-header">
-                        <label for="meal_name">Meal Name:</label>
-                        <input placeholder="name" type="text" style="text-align:center;margin-left:10px" id="meal_name"/>
+                    <div>
+                        Meal Name: <input placeholder="enter name here" type="text" style="text-align:center;margin-left:10px" id="meal_name" />
+                    </div>
+                    <div style="margin-top:10px;">
+                        Date Eaten: <input placeholder="CLICK ME" id="meal_date" style="text-align:center;margin-left:10px">
+                    </div>
                 </div>
 
                 <!--Body-->
                 <div class="modal-body">
                     <div class="text-center">
                         <i class="fas fa-check fa-4x mb-3 animated rotateIn"></i>
-                        <p id="mealInfoSection">
-                            INFO HERE
-                        </p>
+                        <p id="mealInfoSection"></p>
                     </div>
                 </div>
 
@@ -101,15 +103,20 @@
 
 </script>
 
-<!--    CREATE 'onclick()' event FOR THE 'ADD' <BUTTON></BUTTON>-->
-<!--    USE THIS: https://stackoverflow.com/questions/53427267/ -->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    $( "#meal_date" ).datepicker();
+</script>
 
 <script>
 
     $('#add').click(function () {
 
         // collect meal information (name, total values)
-        var tcals=0, tpros=0, tcarbs=0, tfats=0;
+        var tcals = 0, tpros = 0, tcarbs = 0, tfats = 0;
         $("#createMealTable tr").not('thead tr').each(function () {
             var curr_row = $(this).closest('tr');
 
@@ -135,17 +142,20 @@
                 'Total Proteins:' + tpros + '<br>' +
                 'Total Carbs:' + tcarbs + '<br>' +
                 'Total Fats:' + tfats + '<br>'
-                );
+            );
 
+            // POST MEAL INFORMATION TO -> CONTROLLER SEND TO -> TABLE
             $('#modalAddBtn').click(function () {
-                // TODO: post to controller, add to meals table
-                history.back();
+                //history.back();
+                meal_name = $('#meal_name').val();
+                meal_date = $('#meal_date').val();
+                location.reload();
                 $('#mealInfoModal').modal('hide');
             });
 
             $('#modalCancelBtn').click(function () {
-
-                history.back();
+                //history.back();
+                location.reload();
                 $('#mealInfoModal').modal('hide');
             });
 
