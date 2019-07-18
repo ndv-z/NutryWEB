@@ -1,4 +1,5 @@
-﻿
+﻿@*  CREATE NEW MEAL VIEW    *@
+
 @{
     Layout = null;
 }
@@ -47,7 +48,7 @@
                         Meal Name: <input placeholder="enter name here" type="text" style="text-align:center;margin-left:10px" id="meal_name" />
                     </div>
                     <div style="margin-top:10px;">
-                        Date Eaten: <input placeholder="CLICK ME" id="meal_date" style="text-align:center;margin-left:10px">
+                        Date Eaten: <input placeholder="CLICK ME" class="datepicker" id="meal_date" style="text-align:center;margin-left:10px">
                     </div>
                 </div>
 
@@ -108,7 +109,8 @@
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
-    $( "#meal_date" ).datepicker();
+    //$( "#meal_date" ).datepicker();
+    $( ".datepicker" ).datepicker();
 </script>
 
 <script>

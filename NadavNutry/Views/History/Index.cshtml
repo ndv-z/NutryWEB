@@ -11,50 +11,147 @@
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
 
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="/resources/demos/style.css">
-
-    <script src="jquery.min.js"></script>
-    <script src="~/Scripts/NutryScripts.js"></script>
-
 </head>
 
 <body>
-
-    <div id="accordion">
-        <h3>History</h3>
+    <div style="margin-bottom:50px;margin-top:10px">
         <div>
-            HISTORY <br />
-            HISTORY <br />
-            HISTORY <br />
-            HISTORY <br />
-            HISTORY <br />
-            HISTORY <br />
-            HISTORY <br />
-            HISTORY <br />
-            HISTORY <br />
+            <label for="h_age" style="margin-right:25px">Age:</label>
+            <input id="h_age" type="number" min="12" placeholder="age (years)" style="margin-right:10px" class="text-center" />
+            <label for="h_weight" style="margin-right:10px">Weight:</label>
+            <input id="h_weight" type="number" min="40" placeholder="weight (Kilograms)" class="text-center" />
         </div>
-        <h3>Statistics</h3>
         <div>
-            <p>
-                STATS <br />
-                STATS <br />
-                STATS <br />
-                STATS <br />
-
-            </p>
+            <label for="h_height" style="margin-right:10px">Height:</label>
+            <input id="h_height" type="number" min="140" placeholder="height (Centimeters)" style="margin-right:8px" class="text-center" />
+            <label for="h_gender">Gender:</label>
+            <select id="h_gender" style="width:180px;height:25px" class="text-center">
+                <option>Male</option>
+                <option>Female</option>
+            </select>
+        </div>
+        <div>
+            <button id="show_stats" style="margin-top:20px" class="btn btn-primary">Update Stats</button>
         </div>
     </div>
+
+    <div id="container"></div>
 
 </body>
 </html>
 
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="~/Content/highstock_min.js"></script>
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
 
 <script>
-    $("#accordion").accordion({
-        heightStyle: "content"
+
+    var param_series = {
+        name: 'Personal parameters',
+        data: [0,0,0]
+    }
+
+    var chart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'container',
+            type: 'column'
+        },
+        title: {
+            text: ''
+        },
+        credits: {
+            enabled: false
+        },
+        xAxis: {
+            categories: ['BMI', 'BMR', 'RMR'],
+        },
+        yAxis: {
+            title: {
+                text: 'Toal values'
+            }
+        },
+        series: [param_series]
     });
+
+    // The button action
+    $('#show_stats').click(function () {
+
+
+
+        var age = $('#h_age').val();
+        var weight = $('#h_weight').val();
+        var height = $('#h_height').val();
+        var gender = $('#h_gender option:selected').val();
+
+        if (age < 0 || weight < 0 || height < 0 || age == '' || weight == '' || height == '') {
+            alert('error: selected parameter values must be higher than 0.');
+        }
+        else {
+            var bmi = weight/((height/100)*(height/100));
+            if (gender == 'Male') {
+                var bmr = 66.47 + (13.75 * weight) + (5.003 * height) - (6.755 * age);
+                var rmr = 9.99 * weight + 6.25 * height - 4.92 * age + 5;
+            }
+            else {
+                var bmr = 655.1 + (9.563 * weight) + (1.85 * height) - (4.676 * age);
+                var rmr = 9.99 * weight + 6.25 * height - 4.92 * age - 161;
+            }
+            
+            chart.series[0].setData([bmi,bmr,rmr]);
+        }
+
+    });
+
+
 </script>
+
+@*<script src="~/Content/highstock_min.js"></script>*@
+@*<script>
+
+        // load chart
+        LoadChart();
+
+        function LoadChart() {
+
+            var date = "";
+            // get total values for a date picked
+            var total_calories = 1;
+            var total_proteins = 2;
+            var total_carbs = 3;
+            var total_fats = 4;
+
+            var tot_meals_vals = {
+                name: 'Consumed',
+                data: [total_calories, total_proteins, total_carbs, total_fats],
+                color: 'blue'
+            }
+
+            var rec_vals = {
+                name: 'Recommended',
+                data: [1, 2, 3, 4],
+                color: 'green'
+            }
+
+            $('#container').highcharts({
+                chart: {
+                    type: 'bar'
+                },
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: 'Personal Parameters'
+                },
+                xAxis: {
+                    categories: ['Calories', 'Proteins', 'Carbs', 'Fats']
+                },
+                yAxis: {
+                    title: {
+                        text: 'Toal values'
+                    }
+                },
+                series: [tot_meals_vals, rec_vals]
+            });
+        }
+
+    </script>*@
 

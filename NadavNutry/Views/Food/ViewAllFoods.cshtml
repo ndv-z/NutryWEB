@@ -22,12 +22,11 @@
         .table, th, td {
             border: 1px solid lightgray;
             padding: 10px;
-
         }
 
-        .table th {
-            height: 25px;
-        }
+            .table th {
+                height: 25px;
+            }
 
         select {
             text-align-last: center;
@@ -198,7 +197,7 @@ $('.table tbody').on('click', '.edit-food-btn', function (){
     var pros = curr_row.find('td:eq(3)').text();
     var carbs = curr_row.find('td:eq(4)').text();
     var fats = curr_row.find('td:eq(5)').text();
-    
+
     // set place holder with data of food
     $('.modal-body #name').val(name);
     $('.modal-body #name').prop('disabled', true);
@@ -243,7 +242,7 @@ $('.table tbody').on('click', '.edit-food-btn', function (){
     // show edit modal
     $("#myModal").modal("show");
 
-   
+
 
 });
 
@@ -258,7 +257,7 @@ function clear_modal_input() {
 }
 
 
- // handle sending to controller 
+ // handle sending to controller
 function post_to_controller(jsonObject) {
 
     var str_json = JSON.stringify(jsonObject);
@@ -331,7 +330,7 @@ function post_to_controller(jsonObject) {
 
         // show 'are you sure?' modal
         $("#modalConfirmDelete").modal("show");
-        
+
     });
 
 </script>
